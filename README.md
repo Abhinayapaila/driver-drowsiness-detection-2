@@ -1,103 +1,18 @@
-# driver-drowsiness-detection-2
-import cv2
-import os
-from keras.models import load_model
-import numpy as np
-from pygame import mixer
-import time
+Real time detection or tracking of the eyes is very important in the areas of research in computer vision. Detection and human computer interaction. Our focus would be in human computer interaction. This is based on an image algorithm to detect eyes in the visible spectrum. The main advantage of such a method is that it is cost efficient and it does not require any other additional hardware. It can work with regular low-cost webcams. In computer science, Image processing is the is of computer algorithms to perform image processing on images. As a subcategory or field of digital signal processing, image processing has many advantages over analog image processing. It allows a much wider range of algorithms to be applied to the input data and can avoid problems such as the buildup of noise and signal distortion during processing. distortion during processing. Since images are defined over two dimensions digital image processing may be modelled in the form of multidimensional system. Different methods used are as follows:
 
-mixer.init()
-sound = mixer.Sound('file_example_MP3_700KB')
+
+Model-based machine learning method. In the model-based approach, it does not detect the features in the image but rather selects the right model that provides high performance. The field of machine learning has seen the development of thousands of learning algorithms. Typically, scientists choose from these algorithms to solve specific problems. Their choices often being limited by their familiarity with these algorithms. In the classical/traditional framework of machine learning, scientists are constrained to making some assumptions so as to use an existing algorithm. This is in contrast to the model-based machine learning approach which seeks to create a bespoke solution tailored to each new problem. The go of MBML is” to provide a single development framework which supports the creation of a wide range of be spoke models”.
 
-face = cv2.CascadeClassifier('haar cascade files\haarcascade_frontalface_alt.xml')
-leye = cv2.CascadeClassifier('haar cascade files\haarcascade_lefteye_2splits.xml')
-reye = cv2.CascadeClassifier('haar cascade files\haarcascade_righteye_2splits.xml')
+Featured- Based machine learning method.
 
-lbl=['Close','Open']
+In the feature-based method, the eyes detection is done by using the image features related to the position of the eyes. This process is easier and quicker high performance. A video will be recorded of the subjective person using a webcam. Then the video will be converted into several no of frames depending on the frame rate per second. Then by using Haar cascade classifier they eye detection will be performed.
 
-model = load_model('models/cnncat2.h5')
-path = os.getcwd()
-cap = cv2.VideoCapture(0)
-font = cv2.FONT_HERSHEY_COMPLEX_SMALL
-count=0
-score=0
-thicc=2
-rpred=[99]
-lpred=[99]
+Hybrid machine learning (HML) method.
 
-while(True):
-    ret, frame = cap.read()
-    height,width = frame.shape[:2]
+Hybrid machine learning is and advancement of the machine learning work flow that seamlessly combines different algorithms, processes, or procedures from similar or different domains of knowledge or areas of application with the objective of complementing each other. As no single cap fits all heads, no single machine learning method is applicable to all problems. Learning based method in the approach, the machine follows rules or instructions mentions by the developer. in this approach, the machine learns by itself. In this approach. Artificial intelligence (AI) is achieved through the machine learning technique. The present work is based on learning-based method and various stages of the proposed work are:
 
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+1)capturing a video using webcam
 
-    faces = face.detectMultiScale(gray,minNeighbors=5,scaleFactor=1.1,minSize=(25,25))
-    left_eye = leye.detectMultiScale(gray)
-    right_eye = reye.detectMultiScale(gray)
+2) converting the video into frames(image)using OpenCV and finally,
 
-    cv2.rectangle(frame, (0,height-50) , (200,height) , (0,0,0) , thickness=cv2.FILLED )
-
-    for (x,y,w,h) in faces:
-        cv2.rectangle(frame, (x,y) , (x+w,y+h) , (100,100,100) , 1 )
-
-    for (x,y,w,h) in right_eye:
-        r_eye=frame[y:y+h,x:x+w]
-        count=count+1
-        r_eye = cv2.cvtColor(r_eye,cv2.COLOR_BGR2GRAY)
-        r_eye = cv2.resize(r_eye,(24,24))
-        r_eye= r_eye/255
-        r_eye= r_eye.reshape(24,24,-1)
-        r_eye = np.expand_dims(r_eye,axis=0)
-        rpred = model.predict_classes(r_eye)
-        if(rpred[0]==1):
-            lbl='Open'
-        if(rpred[0]==0):
-            lbl='Closed'
-        break
-
-    for (x,y,w,h) in left_eye:
-        l_eye=frame[y:y+h,x:x+w]
-        count=count+1
-        l_eye = cv2.cvtColor(l_eye,cv2.COLOR_BGR2GRAY)
-        l_eye = cv2.resize(l_eye,(24,24))
-        l_eye= l_eye/255
-        l_eye=l_eye.reshape(24,24,-1)
-        l_eye = np.expand_dims(l_eye,axis=0)
-        lpred = model.predict_classes(l_eye)
-        if(lpred[0]==1):
-            lbl='Open'
-        if(lpred[0]==0):
-            lbl='Closed'
-        break
-
-    if(rpred[0]==0 and lpred[0]==0):
-        score=score+1
-        cv2.putText(frame,"Closed",(10,height-20), font, 1,(255,255,255),1,cv2.LINE_AA)
-    # if(rpred[0]==1 or lpred[0]==1):
-    else:
-        score=score-1
-        cv2.putText(frame,"Open",(10,height-20), font, 1,(255,255,255),1,cv2.LINE_AA)
-
-    if(score<0):
-        score=0
-    cv2.putText(frame,'Score:'+str(score),(100,height-20), font, 1,(255,255,255),1,cv2.LINE_AA)
-    if(score>15):
-        #person is feeling sleepy so we beep the alarm
-        cv2.imwrite(os.path.join(path,'image.jpg'),frame)
-        try:
-            sound.play()
-
-        except: # isplaying = False
-            pass
-        if(thicc<16):
-            thicc= thicc+2
-        else:
-            thicc=thicc-2
-            if(thicc<2):
-                thicc=2
-        cv2.rectangle(frame,(0,0),(width,height),(0,0,255),thicc)
-    cv2.imshow('frame',frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-cap.release()
-cv2.destroyAllWindows()
+3)Detecting the eyes using Haar cascade classifier.
